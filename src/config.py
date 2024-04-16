@@ -42,15 +42,15 @@ class Config(object):
     """
     Configuration class.
     """
-    MAX_LR: float = 0.001
-    MOMENTUM: float = 0.9
-    WEIGHT_DECAY: float = 0.000125
-    GRAD_CLIP: float = 0.1
-    NESTEROV: bool = False
+    MAX_LR: float = 0.000012
+    MOMENTUM: float = 0.99
+    WEIGHT_DECAY: float = 0.005
+    GRAD_CLIP: float = 0.005
+    NESTEROV: bool = True
     NUM_CLASSES: int = 2
-    EPOCHS: int = 30
+    EPOCHS: int = 569
     BATCH_SIZE: int = 16
-    DATA_DIR: str = './data'
+    DATA_DIR: str = './sur/data'
     CHECKPOINTS_PATH: Callable = lambda epoch, m_name: f'checkpoints/img_model-{m_name}-{epoch:03d}.pkl'
     NORM_VALS: Tuple[Tuple[float, float, float], Tuple[float, float, float]] = calc_normvals(ImageDataset(DATA_DIR, train=True))
     TRANSFORM_TEST: transforms.Compose = transforms.Compose([
@@ -58,8 +58,15 @@ class Config(object):
                         #transforms.Normalize(*NORM_VALS, inplace=True)
                     ])
     TRANSFORM_TRAIN: transforms.Compose = transforms.Compose([
-                        transforms.RandomCrop(80, padding=8, padding_mode='reflect'),
-                        transforms.Lambda(lambda x: cutout(x, 20, 20)),
+                        transforms.RandomCrop(80, padding=8, padding_mode='constant'),
+                        transforms.GaussianBlur(3, sigma=(0.01, 1)),
+                        transforms.RandomRotation(degrees=(0, 8)),
+                        transforms.RandomGrayscale(),
+                        transforms.RandomAutocontrast(),
+                        transforms.RandomAdjustSharpness(sharpness_factor=2),
+                        transforms.RandomPosterize(4),
+                        transforms.RandomEqualize(),
+                        transforms.Lambda(lambda x: cutout(x, 17, 17)),
                         transforms.RandomHorizontalFlip(),
                         transforms.ToTensor(),
                         #transforms.Normalize(*NORM_VALS, inplace=True)
