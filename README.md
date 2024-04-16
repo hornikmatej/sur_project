@@ -17,8 +17,8 @@ Image data has 3 channels and is in RGB format. Their size is 80x80 pixels. All 
     - non-target: 60
 
 **Models**:
-1. ResNet9 - 9 layer ResNet model
-2. PreActResNet18 - 18 layer PreActResNet model
+1. ResNet9 - 9 layer ResNet model - `6 571 266 params`
+2. PreActResNet18 - 18 layer PreActResNet model -  `11 167 042 params`
 3. ConvMixer - ConvMixer model (substantially worse than the other 2 models)
 
 They key was to use heavy data augmentation to increase the number of examples in the dataset.
