@@ -1,6 +1,8 @@
-from torch import nn
+import torch.nn as nn
 
-class ResNet9(nn.Module):
+from src.models.basemodel import BaseModel
+
+class ResNet9(BaseModel):
     """
     ResNet9 model modified for 80x80 images.
     Architecture is described in blog post: https://myrtle.ai/learn/how-to-train-your-resnet/
@@ -8,13 +10,13 @@ class ResNet9(nn.Module):
     def __init__(self, in_channels, num_classes):
         super().__init__()
         
-        self.conv1 = ResNet9.conv_block(in_channels, 64)
-        self.conv2 = ResNet9.conv_block(64, 128, pool=True)
-        self.res1 = nn.Sequential(ResNet9.conv_block(128, 128), ResNet9.conv_block(128, 128))
+        self.conv1 = self.conv_block(in_channels, 64)
+        self.conv2 = self.conv_block(64, 128, pool=True)
+        self.res1 = nn.Sequential(self.conv_block(128, 128), self.conv_block(128, 128))
         
-        self.conv3 = ResNet9.conv_block(128, 256, pool=True)
-        self.conv4 = ResNet9.conv_block(256, 512, pool=True)
-        self.res2 = nn.Sequential(ResNet9.conv_block(512, 512), ResNet9.conv_block(512, 512))
+        self.conv3 = self.conv_block(128, 256, pool=True)
+        self.conv4 = self.conv_block(256, 512, pool=True)
+        self.res2 = nn.Sequential(self.conv_block(512, 512), self.conv_block(512, 512))
         
         self.classifier = nn.Sequential(nn.AdaptiveAvgPool2d((1, 1)), 
                                         nn.Flatten(), 
@@ -29,19 +31,6 @@ class ResNet9(nn.Module):
         out = self.res2(out) + out
         out = self.classifier(out)
         return out
-    
-    def get_model_name(self):
-        """
-        Returns the name of the model.
-        """
-        return self.__class__.__name__
-
-    def count_parameters(self):
-        """
-        Returns the number of trainable parameters in the model.
-        """
-        return sum(p.numel() for p in self.parameters() if p.requires_grad)
-    
 
     @staticmethod
     def conv_block(in_channels, out_channels, pool=False):

@@ -50,7 +50,7 @@ class Config(object):
     NUM_CLASSES: int = 2
     EPOCHS: int = 569
     BATCH_SIZE: int = 16
-    DATA_DIR: str = './sur/data'
+    DATA_DIR: str = './data'
     CHECKPOINTS_PATH: Callable = lambda epoch, m_name: f'checkpoints/img_model-{m_name}-{epoch:03d}.pkl'
     NORM_VALS: Tuple[Tuple[float, float, float], Tuple[float, float, float]] = calc_normvals(ImageDataset(DATA_DIR, train=True))
     TRANSFORM_TEST: transforms.Compose = transforms.Compose([
