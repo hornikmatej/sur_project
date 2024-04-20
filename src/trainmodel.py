@@ -45,11 +45,11 @@ def save_model(model, optimizer, epoch, path, history):
     }
     torch.save(checkpoint_dict, path)
 
-def load_model(path):
+def load_model(path, device):
     """
     Load model checkpoint.
     """
-    checkpoint = torch.load(path)
+    checkpoint = torch.load(path, map_location=device)
     return checkpoint['model'], checkpoint['optimizer'], checkpoint['epoch'], checkpoint['history']
 
 

@@ -1,8 +1,6 @@
 from torch.utils.data import Dataset
-import torch
 
 import os
-import numpy as np
 from PIL import Image
 
 from typing import Any
