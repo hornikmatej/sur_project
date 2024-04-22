@@ -57,3 +57,6 @@ Code for models are stores in `src/models/` and the training code is in `src/tra
 The main code is in jupyter notebook `image_cnn.ipynb`. The code is written in Python 3.11.7.
 
 
+## Authors
+- **Jan Holáň**
+- **Matej Horník**
