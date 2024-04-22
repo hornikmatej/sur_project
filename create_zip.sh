@@ -10,7 +10,7 @@ mkdir "$tmp_dir"
 # Copy files to the temporary directory
 mkdir "$tmp_dir/SRC"
 
-if [ ! -f ".pdf" ]; then
+if [ ! -f "*.pdf" ]; then
     echo "No pdf file for documentation found!"
     exit 1
 fi
