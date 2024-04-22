@@ -10,15 +10,15 @@ mkdir "$tmp_dir"
 # Copy files to the temporary directory
 mkdir "$tmp_dir/SRC"
 
-if [ ! -f "*.pdf" ]; then
-    echo "No pdf file for documentation found!"
-    exit 1
-fi
+#if [ ! -f "*.pdf" ]; then
+#    echo "No pdf file for documentation found!"
+#    exit 1
+#fi
 
 cp *.pdf "$tmp_dir"
 find ./src -name "*.py" -exec cp --parents '{}' "$tmp_dir/SRC" ';'
 
-rm -rf "$tmp_dir/SRC/src/libs"
+#rm -rf "$tmp_dir/SRC/src/libs"
 
 cp *.ipynb "$tmp_dir/SRC"
 cp README.md "$tmp_dir/SRC"
