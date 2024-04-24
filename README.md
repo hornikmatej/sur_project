@@ -16,6 +16,10 @@ Image data has 3 channels and is in RGB format. Their size is 80x80 pixels. All 
     - target: 10
     - non-target: 60
 
+**Eval dataset**:
+This data was provided to us after submitting the final model.
+- eval: 1342 examples
+
 **Models**:
 1. ResNet9 - 9 layer ResNet model - `6 571 266 params`
 2. PreActResNet18 - 18 layer PreActResNet model -  `11 167 042 params`
@@ -51,6 +55,14 @@ Code for models are stores in `src/models/` and the training code is in `src/tra
 [Preact ResNet18]   - Test Loss: 0.00766, Test Acc: 1.0000, Train Loss: 0.00012, Train Acc: 1.0000
 [Preact ResNet18 A] - Test Loss: 0.00539, Test Acc: 1.0000, Train Loss: 0.00006, Train Acc: 1.0000
 [Preact ResNet34 A] - Test Loss: 0.00009, Test Acc: 1.0000, Train Loss: 0.00002, Train Acc: 1.0000
+```
+
+**Eval results**:
+```bash
+[ResNet9]           - Eval Loss: 0.38013, Eval Acc: 0.9426, Error: 0.0574
+[Preact ResNet18]   - Eval Loss: 0.45691, Eval Acc: 0.9523, Error: 0.0477
+[Preact ResNet18 A] - Eval Loss: 0.36617, Eval Acc: 0.9545, Error: 0.0455
+[Preact ResNet34 A] - Eval Loss: 0.55418, Eval Acc: 0.9553, Error: 0.0447
 ```
 
 ![Confusion matrix for ResNet9](img/resnet9.png)

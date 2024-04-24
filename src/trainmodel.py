@@ -6,7 +6,7 @@ from torch import nn
 
 
 @torch.no_grad()
-def evaluate(model, loader, device, criterion):
+def evaluate(model, loader, device, criterion, verbose=False):
     """
     Evaluate the model on a given set.
     """
@@ -17,6 +17,8 @@ def evaluate(model, loader, device, criterion):
     y_true = []
 
     for data, target in loader:
+        if verbose:
+            print(f"Batch: {len(temp_loss)+1}/{len(loader)}")
         data, target = data.to(device), target.to(device)
         output = model(data)
         loss = criterion(output, target)
