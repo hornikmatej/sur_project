@@ -31,7 +31,7 @@ def cutout(x: Image.Image, h: int, w: int, c: int = 3, p: float = 0.5) -> Image.
     # Convert the NumPy array back to a PIL image
     return Image.fromarray(img_array)
 
-def gaus_noise(x: Image.Image, mean: float = 0.0, std: Tuple[float, float] = (0.05, 0.125), p: float = 0.5) -> Image.Image:
+def gaus_noise(x: Image.Image, mean: Tuple[float, float] = (0.0, 0.2), std: Tuple[float, float] = (0.05, 0.3), p: float = 0.5) -> Image.Image:
     """
     Add Gaussian noise to the image.
     """
@@ -42,7 +42,8 @@ def gaus_noise(x: Image.Image, mean: float = 0.0, std: Tuple[float, float] = (0.
 
     # Generate Gaussian noise with the specified mean and standard deviation
     std_num = np.random.uniform(*std)
-    noise = torch.randn_like(img_tensor) * std_num + mean
+    mean_num = np.random.uniform(*mean)
+    noise = torch.randn_like(img_tensor) * std_num + mean_num
 
     # Add the noise to the image tensor and clip the values to [0, 1]
     img_tensor = (img_tensor + noise).clamp(0.0, 1.0)
@@ -92,7 +93,7 @@ class Config(object):
                         transforms.RandomEqualize(),
                         transforms.Lambda(lambda x: cutout(x, 17, 17)),
                         transforms.RandomHorizontalFlip(),
-                        transforms.Lambda(lambda x: gaus_noise(x, 0.0)),
+                        transforms.Lambda(lambda x: gaus_noise(x)),
                         transforms.ToTensor(),
                         #transforms.Normalize(*NORM_VALS, inplace=True)
                     ])

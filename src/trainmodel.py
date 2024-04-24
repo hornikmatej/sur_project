@@ -56,7 +56,7 @@ def load_model(path, device):
 
 
 def train(model, train_loader, test_loader, epochs, opt_func, 
-          device, cfg, grad_clip=None, verbose=False, save_m=False):
+          device, cfg, grad_clip=None, verbose=False, save_m=False, eval_loader=None):
     """
     Training cycle for the model.
     """
@@ -67,7 +67,15 @@ def train(model, train_loader, test_loader, epochs, opt_func,
     optimizer = opt_func
 
     #scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[35,57], gamma=0.1)
-    criterion = nn.CrossEntropyLoss()
+    # Calculate class weights
+    targets = torch.tensor([target for data, target in train_loader.dataset])
+    class_counts = torch.bincount(targets)
+    class_weights = 1.0 / class_counts
+    class_weights = class_weights / class_weights.sum()
+    class_weights = class_weights.to(device)
+
+    criterion = nn.CrossEntropyLoss(weight=class_weights)
+
     time_per_epoch = []
     epoch = 0
 
@@ -110,6 +118,9 @@ def train(model, train_loader, test_loader, epochs, opt_func,
         
         #scheduler.step()
         time_per_epoch.append(time.time() - start_time)
+        # Evaluate model on eval set
+        if eval_loader:
+            eval_loss, eval_acc = evaluate(model, eval_loader, device, criterion)
         # Evaluate model on test set
         test_loss, test_acc = evaluate(model, test_loader, device, criterion)
         history.append({'epoch': epoch, 'lrs': lrs, 'train_loss': np.mean(train_losses), 'train_acc': np.mean(train_acc),
@@ -124,7 +135,10 @@ def train(model, train_loader, test_loader, epochs, opt_func,
             best_epoch = epoch
 
         if verbose:
-            print(f"[Epoch: {epoch+1:02d}/{epochs:02d}] - {time_per_epoch[-1]:.2f}s | LR: {lrs[-1]:.6f} | Train Loss: {np.mean(train_losses):.4f} | Train Acc: {np.mean(train_acc)*100:.2f} | Test Loss: {test_loss:.4f} | Test Acc: {test_acc*100:.2f}")
+            if eval_loader:
+                print(f"[E: {epoch+1:02d}/{epochs:02d}] - {time_per_epoch[-1]:.2f}s | LR: {lrs[-1]:.6f} | TrainL: {np.mean(train_losses):.4f} | TrainA: {np.mean(train_acc)*100:.2f} | TestL: {test_loss:.4f} | TestA: {test_acc*100:.2f} | EvalL: {eval_loss:.4f} | EvalA: {eval_acc*100:.2f}")
+            else:
+                print(f"[E: {epoch+1:02d}/{epochs:02d}] - {time_per_epoch[-1]:.2f}s | LR: {lrs[-1]:.6f} | TrainL: {np.mean(train_losses):.4f} | TrainA: {np.mean(train_acc)*100:.2f} | TestL: {test_loss:.4f} | TestA: {test_acc*100:.2f}")
     if save_m:
         save_model(model, optimizer, epoch, cfg.CHECKPOINTS_PATH(epoch, model.get_model_name()), history)
     if verbose:
