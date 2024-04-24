@@ -19,6 +19,7 @@ Image data has 3 channels and is in RGB format. Their size is 80x80 pixels. All 
 **Models**:
 1. ResNet9 - 9 layer ResNet model - `6 571 266 params`
 2. PreActResNet18 - 18 layer PreActResNet model -  `11 167 042 params`
+3. PreActResNet34 - 34 layer PreActResNet model - `21 275 202 params` 
 3. ConvMixer - ConvMixer model (substantially worse than the other 2 models)
 
 They key was to use heavy data augmentation to increase the number of examples in the dataset.
@@ -46,8 +47,10 @@ Code for models are stores in `src/models/` and the training code is in `src/tra
 
 **Best models from checkpoints**:
 ```bash
-[ResNet9]           - Test Loss: 0.0191, Test Acc: 1.0000, Train Loss: 0.0062, Train Acc: 1.0000
-[Preact ResNet18]   - Test Loss: 0.0077, Test Acc: 1.0000, Train Loss: 0.0058, Train Acc: 1.0000
+[ResNet9]           - Test Loss: 0.01912, Test Acc: 1.0000, Train Loss: 0.00067, Train Acc: 1.0000
+[Preact ResNet18]   - Test Loss: 0.00766, Test Acc: 1.0000, Train Loss: 0.00012, Train Acc: 1.0000
+[Preact ResNet18 A] - Test Loss: 0.00539, Test Acc: 1.0000, Train Loss: 0.00006, Train Acc: 1.0000
+[Preact ResNet34 A] - Test Loss: 0.00009, Test Acc: 1.0000, Train Loss: 0.00002, Train Acc: 1.0000
 ```
 
 ![Confusion matrix for ResNet9](img/resnet9.png)

@@ -63,3 +63,6 @@ class PreActResNet(BaseModel):
 
 def PreActResNet18():
     return PreActResNet(PreActBlock, [2,2,2,2])
+
+def PreActResNet34():
+    return PreActResNet(PreActBlock, [3,4,6,3])

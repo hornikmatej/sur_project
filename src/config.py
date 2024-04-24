@@ -5,16 +5,20 @@ import numpy as np
 from typing import Tuple, Callable
 from torch.utils.data import Dataset
 from PIL import ImageFile
+from typing import Tuple
 
 from src.dataset import ImageDataset
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-def cutout(x: Image.Image, h: int, w: int, c: int = 3) -> Image.Image:
+def cutout(x: Image.Image, h: int, w: int, c: int = 3, p: float = 0.5) -> Image.Image:
     """
     Cutout data augmentation. Randomly cuts h by w hole in the image, and fill the whole with zeros.
     # https://arxiv.org/abs/1708.04552
     """
+    if np.random.rand() > p:
+        return x
+    
     image_h, image_w = x.size[0], x.size[1]
     x0 = torch.randint(0, image_h + 1 - h, ())
     y0 = torch.randint(0, image_w + 1 - w, ())
@@ -25,6 +29,26 @@ def cutout(x: Image.Image, h: int, w: int, c: int = 3) -> Image.Image:
         img_array[x0:x0+h, y0:y0+w, :] = 0
 
     # Convert the NumPy array back to a PIL image
+    return Image.fromarray(img_array)
+
+def gaus_noise(x: Image.Image, mean: float = 0.0, std: Tuple[float, float] = (0.05, 0.125), p: float = 0.5) -> Image.Image:
+    """
+    Add Gaussian noise to the image.
+    """
+    if np.random.rand() > p:
+        return x
+    # Convert the image to a PyTorch tensor
+    img_tensor = torch.tensor(np.array(x), dtype=torch.float32) / 255.0
+
+    # Generate Gaussian noise with the specified mean and standard deviation
+    std_num = np.random.uniform(*std)
+    noise = torch.randn_like(img_tensor) * std_num + mean
+
+    # Add the noise to the image tensor and clip the values to [0, 1]
+    img_tensor = (img_tensor + noise).clamp(0.0, 1.0)
+
+    # Convert the tensor back to a PIL image
+    img_array = (img_tensor * 255.0).to(torch.uint8).numpy()
     return Image.fromarray(img_array)
 
 def calc_normvals(dataset: ImageDataset) -> Tuple[Tuple[float, float, float], Tuple[float, float, float]]:
@@ -68,6 +92,7 @@ class Config(object):
                         transforms.RandomEqualize(),
                         transforms.Lambda(lambda x: cutout(x, 17, 17)),
                         transforms.RandomHorizontalFlip(),
+                        transforms.Lambda(lambda x: gaus_noise(x, 0.0)),
                         transforms.ToTensor(),
                         #transforms.Normalize(*NORM_VALS, inplace=True)
                     ])
